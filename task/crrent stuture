@@ -1,0 +1,87 @@
+What it is
+Writers type in Quill (library) with the Snow toolbar. The product wrapper is RichTextEditor.jsx. Book Editor and uploaded manuscripts wrap that in ManuscriptDraftEditor.jsx for save/dirty/word count. Capture Idea and Final Draft use RichTextEditor directly.
+
+Quill only edits. Save, word count, and Word files are not Quill features.
+
+Toolbar (tools)
+Tool	Writer action
+H1 / H2 / H3 / Normal
+Heading or body paragraph
+Bold, italic, underline, strike
+Inline style
+Highlight
+7 colors + remove
+Align
+Left, center, right, justify
+Font
+Times New Roman (default) or Arial
+Size
+10–18 pt (old scenes may still use px)
+Line spacing
+1, 1.15, 1.5, 2 (page default looks like double)
+Space after paragraph
+None, 6, 12, or 18 pt
+Lists
+Numbered or bullets
+Link
+Insert / edit URL
+Not available: text color, images, video, quotes, code, horizontal line, indent buttons.
+
+Default look (CSS): Times New Roman, 12 pt, double spacing.
+
+Extra behavior (keyboard, paste, voice)
+Tab (not in a list): first-line indent (five spaces as &nbsp;).
+Shift+Tab: remove that indent.
+Enter: next paragraph keeps the same indent (not for lists, headings, or center/right).
+Paste from Word: indent and empty lines kept; fake Word bold/italic cleaned up.
+Undo / redo: built-in history; page buttons use the same.
+Dictation: inserts at the last caret so the mic does not jump the cursor.
+Read-only: no toolbar.
+Input format (into the editor)
+Always an HTML string, never saved as Quill Delta.
+
+Comes from	Format
+Database
+userContent HTML
+Browser backup
+Same HTML in localStorage
+Word upload
+Backend turns Word into Quill-like HTML, then the editor loads it
+On load, empty paragraphs are forced to <p><br></p> so blank lines are not lost. Inside the session, HTML is converted to Quill’s Delta in memory only.
+
+Output format (out of the editor)
+Always HTML (innerHTML, then a small normalize).
+
+Goes to	Format
+Autosave / Save
+HTML posted as { id, userContent }
+Word count
+HTML stripped to words
+Download manuscript
+Backend builds .docx from that HTML (ql-align-*, font-size, line-height, margin-bottom)
+Olivia / Ellis
+Backend strips HTML to plain text
+Autosave waits 800ms after typing. “Unsaved” means the HTML (after normalize) differs from last saved.
+
+Example of what gets stored:
+
+<p class="ql-align-center" style="line-height: 2; margin-bottom: 12pt;">
+  <span style="font-size: 12pt;">Chapter One</span>
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It was a dark and stormy night.</p>
+Around the editor (still the writer’s experience)
+What the writer notices	Who does it
+Autosave / Save / unsaved badge
+ManuscriptDraftEditor + page
+Recover draft after refresh
+localStorage
+Word count
+Frontend from HTML
+Spellcheck underlines
+Custom overlay, not browser spellcheck
+Import / export Word
+Backend; the app only uploads/downloads
+What it does not do
+No find/replace, comments, track changes, tables, or pictures in the prose.
+
+A fuller structured version of this spec is in the plan Current rich text editor — tools, behavior, and formats.
